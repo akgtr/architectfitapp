@@ -4,6 +4,7 @@
 
 ## Содержание
 - [Бизнес-цели](docs/01-business-goals.md)
+- [Функциональные требования](docs/02-Analysis-and-list-of-functional-requirements.md) 
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
