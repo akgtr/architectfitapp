@@ -7,7 +7,8 @@
 - [1. Бизнес-цели.](docs/01_business_goals.md)
 - [2. Функциональные требования.](docs/02_Analysis_and_list_of_functional_requirements.md) 
 - [3. Анализ стейкхолдеров и их интересов.](docs/03_Analysis_of_stakeholders_and_their_interests.md)
-- [4. Концептуальная архитектура, схемы и диаграммы](docs/04_conceptual_architecture.md)
+- [4. Концептуальная архитектура, схемы и диаграммы.](docs/04_conceptual_architecture.md)
+- [5. Описание рисков реализации (бизнес и технические).](docs/05_Description_of_implementation_risks.md)
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
