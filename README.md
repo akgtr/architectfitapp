@@ -9,6 +9,7 @@
 - [3. Анализ стейкхолдеров и их интересов.](docs/03_Analysis_of_stakeholders_and_their_interests.md)
 - [4. Концептуальная архитектура, схемы и диаграммы.](docs/04_conceptual_architecture.md)
 - [5. Описание рисков реализации (бизнес и технические).](docs/05_Description_of_implementation_risks.md)
+- [6. План поэтапной разработки и расширения системы, анализ критически важных компонентов.](docs/06_step_by_step_development_plan.md)
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
