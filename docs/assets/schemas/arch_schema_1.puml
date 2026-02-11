@@ -1,6 +1,10 @@
 @startuml
 !include docs\assets\schemas\C4_Container.puml
 
+' Более прямые и разнесённые связи
+skinparam nodesep 120
+skinparam ranksep 120
+
 ' Ортогональная раскладка и более прямые линии
 skinparam linetype ortho
 skinparam ArrowColor Black

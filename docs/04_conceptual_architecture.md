@@ -163,3 +163,5 @@ flowchart TD
     classDef system fill:e8f5e9,stroke:43a047,color:1b5e20,stroke-width:1px;
     classDef external fill:f5f5f5,stroke:757575,color:424242,stroke-width:1px;
 ```
+### 4.12. C4 диаграмма концептуальной архитектуры
+![Архитектурная схема](assets/images/arch_schema_1.png)

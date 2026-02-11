@@ -8,7 +8,7 @@
 - [2. Функциональные требования.](docs/02_Analysis_and_list_of_functional_requirements.md) 
 - [3. Анализ стейкхолдеров и их интересов.](docs/03_Analysis_of_stakeholders_and_their_interests.md)
 - [4. Концептуальная архитектура](docs/04_conceptual_architecture.md)
-- [C4‑диаграмма архитектуры](docs/assets/schemas/arch_schema_1.puml)
+- [C4‑диаграмма архитектуры](docs/assets/images/arch_schema_1.png)
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
