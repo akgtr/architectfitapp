@@ -4,8 +4,9 @@
 
 ## Содержание
 ### Концепт архитектурного решения
-- [Бизнес-цели](docs/01-business-goals.md)
-- [Функциональные требования](docs/02-Analysis-and-list-of-functional-requirements.md) 
+- [1. Бизнес-цели.](docs/01_business_goals.md)
+- [2. Функциональные требования.](docs/02_Analysis_and_list_of_functional_requirements.md) 
+- [3. Анализ стейкхолдеров и их интересов.](docs/03_Analysis_of_stakeholders_and_their_interests.md)
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
