@@ -41,7 +41,7 @@
   - [Функциональное.](docs/14_1_functional.md)
   - [Информационное.](docs/14_2_information.md)
   - [Многозадачность (concurrency).](docs/14_3_concurrency.md)
-  - [Инфраструктурное.](docs/14_4_concurrency.md)
+  - [Инфраструктурное.](docs/14_4_infrastructural.md)
   - [Безопасность.](docs/14_5_safety.md)
 
 - [Схемы, изображения](docs/assets/images/)
