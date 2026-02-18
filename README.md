@@ -16,11 +16,11 @@
 - [08. Атрибуты качества.](docs/08_quality_%20attributes.md)
 - [09. Анализ и список нефункциональных требований.](docs/09_list_of_non-functional_requirements.md)
 - [10. Анализ и описание архитектурных опций и обоснование выбора.]()
-### 11. ADR (Architecture Decision Records)
-
-**Status:** Accepted  
-**Date:** 2026-02-18  
-**Authors:** Архитектор команды проекта спортивного приложения
+***
+- 11\. ADR (Architecture Decision Records)
+    - **Status:** Accepted  
+    - **Date:** 2026-02-18  
+    - **Authors:** Архитектор команды проекта спортивного приложения
 
 
 - [ADR-001: Выбор архитектурного стиля.](docs/adr/ADR-001.md)
@@ -35,7 +35,15 @@
 - [ADR-010: Privacy by Design для social‑ и geo‑функций](docs/adr/ADR-010.md)
 
 ***
-- [12 Описание сценариев использования приложения.](docs/12_usage_scenarios.md)
+- [12. Описание сценариев использования приложения.](docs/12_usage_scenarios.md)
+- [13. Базовая архитектура с учётом ограничений бизнес-требований, НФТ, выбранной архитектуры, адресация атрибутов качества.](docs/13_basic_architecture.md)
+- 14\.	Основные представления:
+  - [Функциональное.](docs/14_1_functional.md)
+  - [Информационное.](docs/14_2_information.md)
+  - [Многозадачность (concurrency).](docs/14_3_concurrency.md)
+  - [Инфраструктурное.](docs/14_4_concurrency.md)
+  - [Безопасность.](docs/14_5_safety.md)
+
 - [Схемы, изображения](docs/assets/images/)
   
 ## О проекте

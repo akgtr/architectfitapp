@@ -1,0 +1,106 @@
+@startuml
+!include <C4/C4_Deployment>
+
+title Deployment / Infrastructure Diagram - Fitness App on AKS
+
+' Пользовательское устройство
+Deployment_Node(mobile, "Mobile Device", "iOS / Android") {
+  Container(mobile_app, "Mobile App", "Kotlin / Swift", "Клиентское приложение для трекинга и соц-функций")
+}
+
+' Облако с AKS
+Deployment_Node(azure, "Azure Subscription", "Cloud Environment") {
+
+  Deployment_Node(aks, "AKS Cluster", "Kubernetes", "Кластер для микросервисов приложения") {
+
+    Deployment_Node(ingress_node, "Ingress Layer", "NGINX Ingress Controller", "Маршрутизация внешнего трафика в кластер") {
+      Container(ingress, "Ingress", "Kubernetes Ingress", "Принимает HTTPS-трафик от мобильных клиентов и отправляет его в BFF")
+    }
+
+    Deployment_Node(app_ns, "App Namespace", "Kubernetes Namespace", "Основные backend-сервисы") {
+      Container(bff, "API Gateway / BFF", "Container", "Единая точка входа для Mobile App")
+      Container(idp, "Identity & Privacy Service", "Container", "Аутентификация, настройки приватности, согласия")
+      Container(profile, "Profile Service", "Container", "Профили пользователей")
+      Container(training, "Training Service", "Container", "Тренировки, маршруты, метрики")
+      Container(feed, "Feed Service", "Container", "Социальная лента")
+      Container(leaderboards, "Leaderboards Service", "Container", "Челленджи и рейтинги")
+      Container(social, "Social / Relationships Service", "Container", "Друзья и подписки")
+      Container(notify, "Notification Service", "Container", "Push/уведомления")
+    }
+
+    Deployment_Node(infra_ns, "Infra Namespace", "Kubernetes Namespace", "Инфраструктурные компоненты") {
+      Container(queue, "Event Bus", "Kafka / RabbitMQ / Service Bus", "Асинхронный обмен событиями")
+      Container(cache, "Cache", "Redis", "Кэш профилей, настроек и рейтингов")
+      Container(logger, "Logging", "ELK / Cloud Logging", "Централизованные логи")
+      Container(metrics, "Metrics", "Prometheus / Cloud Metrics", "Метрики и алерты")
+      Container(tracing, "Tracing", "Jaeger / Zipkin", "Распределённые трассировки")
+    }
+  }
+
+  ' Управляемые базы данных
+  Deployment_Node(data, "Managed Databases", "DBaaS", "Управляемые БД") {
+    ContainerDb(idp_db, "Identity & Privacy DB", "Relational DB", "Пользователи, приватность, согласия")
+    ContainerDb(profile_db, "Profile DB", "Relational DB", "Профили пользователей")
+    ContainerDb(training_db, "Training DB", "Relational DB", "Тренировки, маршруты, метрики")
+    ContainerDb(feed_db, "Feed DB", "Relational DB", "Материализованная лента")
+    ContainerDb(lb_db, "Leaderboards DB", "Relational DB", "Челленджи и рейтинги")
+    ContainerDb(social_db, "Social DB", "Relational DB", "Связи друзей/подписок")
+    ContainerDb(obj_store, "Object Storage", "Blob Storage", "Сырые маршруты, экспорты данных")
+  }
+}
+
+' Внешний провайдер идентичности бренда
+Deployment_Node(brand, "Brand Identity", "SSO / IdP") {
+  Container(brand_sso, "Brand SSO", "OIDC / SAML", "Аккаунты бренда, внешняя аутентификация")
+}
+
+' Связи
+Rel(mobile_app, ingress, "HTTPS API calls", "HTTPS/TLS")
+Rel(ingress, bff, "Proxy / route requests", "HTTPS/TLS")
+
+Rel(bff, idp, "Auth, privacy settings", "HTTP/gRPC")
+Rel(bff, profile, "Profiles API", "HTTP/gRPC")
+Rel(bff, training, "Workouts API", "HTTP/gRPC")
+Rel(bff, feed, "Feed API", "HTTP/gRPC")
+Rel(bff, leaderboards, "Leaderboards API", "HTTP/gRPC")
+Rel(bff, social, "Relationships API", "HTTP/gRPC")
+Rel(bff, notify, "Notifications API", "HTTP/gRPC")
+
+Rel(idp, brand_sso, "Authenticate users", "OIDC/SAML")
+
+Rel(idp, idp_db, "Read/write", "SQL")
+Rel(profile, profile_db, "Read/write", "SQL")
+Rel(training, training_db, "Read/write", "SQL")
+Rel(feed, feed_db, "Read/write", "SQL")
+Rel(leaderboards, lb_db, "Read/write", "SQL")
+Rel(social, social_db, "Read/write", "SQL")
+Rel(training, obj_store, "Store raw routes/exports", "Blob API")
+
+Rel(training, queue, "Publish TrainingEvent", "Async messages")
+Rel(idp, queue, "Publish PrivacyChangeEvent", "Async messages")
+Rel(feed, queue, "Consume events", "Async messages")
+Rel(leaderboards, queue, "Consume events", "Async messages")
+
+Rel(bff, cache, "Cache profiles, privacy, leaderboards", "Key/Value")
+Rel(idp, cache, "Cache privacy settings", "Key/Value")
+
+Rel(bff, logger, "Logs", "")
+Rel(idp, logger, "Logs", "")
+Rel(training, logger, "Logs", "")
+Rel(feed, logger, "Logs", "")
+Rel(leaderboards, logger, "Logs", "")
+
+Rel(bff, metrics, "Metrics", "")
+Rel(idp, metrics, "Metrics", "")
+Rel(training, metrics, "Metrics", "")
+Rel(feed, metrics, "Metrics", "")
+Rel(leaderboards, metrics, "Metrics", "")
+
+Rel(bff, tracing, "Traces", "")
+Rel(idp, tracing, "Traces", "")
+Rel(training, tracing, "Traces", "")
+Rel(feed, tracing, "Traces", "")
+Rel(leaderboards, tracing, "Traces", "")
+
+SHOW_LEGEND()
+@enduml
