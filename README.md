@@ -12,6 +12,7 @@
 - [6. План поэтапной разработки и расширения системы, анализ критически важных компонентов.](docs/06_step_by_step_development_plan.md)
 - [7. Выделение критических бизнес-сценариев.](docs/07_critical_business_scenarios.md)
 - [8. Атрибуты качества.](docs/08_quality_%20attributes.md)
+- [9. Анализ и список нефункциональных требований](docs/09_list_of_non-functional_requirements.md)
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
