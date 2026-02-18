@@ -1,0 +1,55 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 330
+skinparam ranksep 120
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Event Bus, Feed и Leaderboards
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение")
+
+    Container(api_gateway, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа для клиента")
+
+    Container(training, "Training Service", "Backend Service", "Создание и хранение тренировок")
+    Container(challenges, "Challenges Service", "Backend Service", "Челленджи и прогресс участников")
+    Container(feed, "Feed Service", "Backend Service", "Лента активности пользователей")
+    Container(leaderboards, "Leaderboards Service", "Backend Service", "Таблицы лидеров по челленджам")
+
+    Container(event_bus, "Event Bus", "Kafka / RabbitMQ", "Асинхронный обмен доменными событиями")
+}
+
+' Пользователь и приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+Rel(mobile_app, api_gateway, "Запросы", "JSON/HTTPS")
+
+' API Gateway ↔ домены (синхронно)
+Rel(api_gateway, training, "Создать/получить тренировки", "JSON/HTTPS")
+Rel(api_gateway, challenges, "Присоединиться к челленджу,\nполучить прогресс", "JSON/HTTPS")
+Rel(api_gateway, feed, "Получить ленту активности", "JSON/HTTPS")
+Rel(api_gateway, leaderboards, "Получить лидерборды", "JSON/HTTPS")
+
+' --- Публикация событий в шину ---
+
+Rel(training, event_bus, "Публикует события тренировок\nworkout_completed, workout_updated", "events")
+Rel(challenges, event_bus, "Публикует события челленджей\nchallenge_joined, challenge_progress_updated,\nchallenge_completed", "events")
+
+' --- Подписка и формирование проекций ---
+
+Rel(event_bus, feed, "Доставляет события\nдля формирования ленты", "events")
+Rel(event_bus, leaderboards, "Доставляет события\nдля обновления рейтингов", "events")
+
+SHOW_LEGEND()
+@enduml

@@ -2,6 +2,8 @@
 
 Мобильная платформа для глобального спортивного сообщества, которая помогает пользователям тренироваться, соревноваться и общаться, а бренду — развивать экосистему сервисов и продаж.
 
+***
+
 ## Содержание
 ### Концепт архитектурного решения
 - [01. Бизнес-цели.](docs/01_business_goals.md)
@@ -14,7 +16,7 @@
 - [08. Атрибуты качества.](docs/08_quality_%20attributes.md)
 - [09. Анализ и список нефункциональных требований.](docs/09_list_of_non-functional_requirements.md)
 - [10. Анализ и описание архитектурных опций и обоснование выбора.]()
-### ADR (Architecture Decision Records)
+### 11. ADR (Architecture Decision Records)
 
 **Status:** Accepted  
 **Date:** 2026-02-18  
@@ -24,8 +26,17 @@
 - [ADR-001: Выбор архитектурного стиля.](docs/adr/ADR-001.md)
 - [ADR-002: Использование API Gateway и BFF для мобильного клиента.](docs/adr/ADR-002.md)
 - [ADR-003: Гибридное взаимодействие REST + Event-driven через шину сообщений.](docs/adr/ADR-003.md)
+- [ADR-004: Старт с общего Operational DB и выделенного аналитического контура](docs/adr/ADR-004.md)
+- [ADR-005: Выделение домена Identity & Security (SSO, IAM, Privacy)](docs/adr/ADR-005.md)
+- [ADR-006: Event-driven лента активности и лидерборды](docs/adr/ADR-006.md)
+- [ADR-007: Rules-based персонализация тренировочных планов и мотивации на первом этапе](docs/adr/ADR-007.md)
+- [ADR-008: Отдельный слой Integrations Service для устройств и B2B](docs/adr/ADR-008.md)
+- [ADR-009: Единый стек наблюдаемости (логи, метрики, трассировка)](docs/adr/ADR-009.md)
+- [ADR-010: Privacy by Design для social‑ и geo‑функций](docs/adr/ADR-010.md)
 
-- [Схемы, изображения](images/)
+***
+- [12 Описание сценариев использования приложения.](docs/12_usage_scenarios.md)
+- [Схемы, изображения](docs/assets/images/)
   
 ## О проекте
 

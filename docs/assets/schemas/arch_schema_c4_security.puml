@@ -1,0 +1,57 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 120
+skinparam ranksep 120
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Identity & Security
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение")
+
+    Container(api_gateway, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа для клиента")
+
+    Container(identity, "Identity & Security", "Keycloak / Cognito / Custom", "Аутентификация, авторизация, сессии, приватность")
+
+    Container_Boundary(backend, "Backend Services") {
+        Container(training, "Training Service", "Backend Service", "Тренировки и прогресс")
+        Container(community, "Community Service", "Backend Service", "Соц. граф, группы, лента")
+        Container(challenges, "Challenges Service", "Backend Service", "Челленджи и лидерборды")
+        Container(commerce, "Commerce Service", "Backend Service", "Инвентарь, каталог, промо")
+    }
+}
+
+System_Ext(brand_sso, "Brand SSO / Identity", "Существующая система учётных записей бренда")
+
+' Пользователь -> приложение
+Rel(user, mobile_app, "Вход, работа с приложением", "HTTPS")
+
+' Мобильное приложение -> API Gateway / BFF
+Rel(mobile_app, api_gateway, "Запросы с токенами / без токена", "JSON/HTTPS")
+
+' API Gateway / BFF -> Identity & Security
+Rel(api_gateway, identity, "Аутентификация, выдача и проверка токенов", "OAuth2 / OIDC")
+
+' Identity & Security -> Brand SSO
+Rel(identity, brand_sso, "SSO, синхронизация учётных записей", "OIDC / SAML")
+
+' API Gateway / BFF -> доменные сервисы (с проверенными токенами)
+Rel(api_gateway, training, "Запросы к API (с проверенными токенами)", "JSON/HTTPS")
+Rel(api_gateway, community, "Запросы к API (с проверенными токенами)", "JSON/HTTPS")
+Rel(api_gateway, challenges, "Запросы к API (с проверенными токенами)", "JSON/HTTPS")
+Rel(api_gateway, commerce, "Запросы к API (с проверенными токенами)", "JSON/HTTPS")
+
+SHOW_LEGEND()
+@enduml

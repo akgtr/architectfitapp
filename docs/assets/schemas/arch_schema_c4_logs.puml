@@ -1,0 +1,72 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 150
+skinparam ranksep 150
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Observability Focus
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение")
+
+    Container(bff, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа и агрегации данных")
+
+    Container(training, "Training Service", "Backend Service", "Тренировки и прогресс")
+    Container(community, "Community Service", "Backend Service", "Соц. граф, группы, лента")
+    Container(challenges, "Challenges Service", "Backend Service", "Челленджи и лидерборды")
+    Container(plans, "Plans & Rules Engine", "Backend Service", "Планы и правила")
+    Container(commerce, "Commerce Service", "Backend Service", "Инвентарь, каталог, промо")
+    Container(integrations, "Integrations Service", "Backend Service", "Интеграции с устройствами и B2B")
+
+    Container(event_bus, "Event Bus", "Kafka / RabbitMQ", "Асинхронный обмен событиями")
+
+    Container(observability, "Observability Stack", "Logs / Metrics / Traces", "Централизованные логи, метрики, трассировки")
+}
+
+System_Ext(brand_sso, "Brand SSO / Identity", "Учётные записи бренда")
+
+' Пользователь и приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+Rel(mobile_app, bff, "Запросы", "JSON/HTTPS")
+
+' Основные взаимодействия (схематично)
+Rel(bff, training, "REST API", "JSON/HTTPS")
+Rel(bff, community, "REST API", "JSON/HTTPS")
+Rel(bff, challenges, "REST API", "JSON/HTTPS")
+Rel(bff, plans, "REST API", "JSON/HTTPS")
+Rel(bff, commerce, "REST API", "JSON/HTTPS")
+Rel(bff, integrations, "REST API", "JSON/HTTPS")
+
+Rel(training, event_bus, "Публикует события", "events")
+Rel(challenges, event_bus, "Публикует события", "events")
+Rel(commerce, event_bus, "Публикует события", "events")
+Rel(integrations, event_bus, "Публикует события", "events")
+
+Rel(bff, brand_sso, "SSO / OAuth2", "OIDC/SAML")
+
+' --- Observability: логи, метрики, трейсинг из всех сервисов ---
+
+Rel(mobile_app, observability, "Отправляет клиентские логи и crash-репорты", "logs")
+Rel(bff, observability, "Логи, метрики, трассировки\n(входные запросы, ошибки)", "logs/metrics/traces")
+Rel(training, observability, "Логи, метрики, трассировки\n(тренировки, агрегации)", "logs/metrics/traces")
+Rel(community, observability, "Логи, метрики, трассировки\n(соц. операции)", "logs/metrics/traces")
+Rel(challenges, observability, "Логи, метрики, трассировки\n(челленджи, рейтинги)", "logs/metrics/traces")
+Rel(plans, observability, "Логи, метрики, трассировки\n(планы, адаптация)", "logs/metrics/traces")
+Rel(commerce, observability, "Логи, метрики, трассировки\n(инвентарь, покупки)", "logs/metrics/traces")
+Rel(integrations, observability, "Логи, метрики, трассировки\n(внешние API, ошибки)", "logs/metrics/traces")
+Rel(event_bus, observability, "Метрики и логи брокера\n(очереди, задержки, ошибки)", "logs/metrics")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,72 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 150
+skinparam ranksep 150
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Privacy by Design Focus
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение")
+
+    Container(bff, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа и агрегации данных")
+
+    Container(identity_privacy, "Identity & Privacy Service", "Backend Service", "Аутентификация, настройки приватности, согласия")
+
+    Container(profile, "Profile Service", "Backend Service", "Профиль пользователя и базовые атрибуты")
+
+    Container(training, "Training Service", "Backend Service", "Тренировки, сырые маршруты и метрики")
+
+    Container(feed, "Feed Service", "Backend Service", "Лента активности\n(агрегированные и отфильтрованные данные)")
+
+    Container(leaderboards, "Leaderboards Service", "Backend Service", "Таблицы лидеров\n(агрегированные показатели)")
+
+    ContainerDb(operational_db, "Operational Database", "PostgreSQL / Managed DB", "Транзакционные данные (профиль, тренировки, настройки приватности)")
+}
+
+System_Ext(brand_sso, "Brand SSO / Identity", "Учётные записи бренда")
+
+' Пользователь и приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+
+' Mobile App ↔ BFF
+Rel(mobile_app, bff, "Запросы (в т.ч. настройки приватности,\nлента, рейтинги)", "JSON/HTTPS")
+
+' BFF ↔ Identity & Privacy
+Rel(bff, identity_privacy, "Управление аутентификацией,\nчтение и запись настроек приватности", "JSON/HTTPS")
+
+' Identity & Privacy ↔ Brand SSO
+Rel(identity_privacy, brand_sso, "SSO, синхронизация учётных записей", "OIDC/SAML")
+
+' BFF ↔ доменные сервисы
+Rel(bff, profile, "Профиль пользователя", "JSON/HTTPS")
+Rel(bff, training, "Создать/получить тренировки", "JSON/HTTPS")
+Rel(bff, feed, "Получить ленту активности", "JSON/HTTPS")
+Rel(bff, leaderboards, "Получить лидерборды", "JSON/HTTPS")
+
+' Домены ↔ Identity & Privacy (проверка настроек)
+Rel(training, identity_privacy, "Запрос настроек приватности\nдля пользователя при обработке тренировок", "JSON/HTTPS")
+Rel(feed, identity_privacy, "Проверка настроек приватности\nавторов записей ленты", "JSON/HTTPS")
+Rel(leaderboards, identity_privacy, "Проверка настроек участия\nв рейтингах и степени анонимности", "JSON/HTTPS")
+
+' Хранилище
+Rel(profile, operational_db, "Читает/пишет профиль", "SQL")
+Rel(training, operational_db, "Читает/пишет тренировки\n(включая маршруты и метрики)", "SQL")
+Rel(identity_privacy, operational_db, "Читает/пишет настройки\nприватности и согласия", "SQL")
+Rel(feed, operational_db, "Читает/пишет элементы ленты\n(агрегированные данные)", "SQL")
+Rel(leaderboards, operational_db, "Читает/пишет данные\nлидербордов", "SQL")
+
+SHOW_LEGEND()
+@enduml```

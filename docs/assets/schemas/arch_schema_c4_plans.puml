@@ -1,0 +1,73 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 220
+skinparam ranksep 120
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Plans & Rules Engine и Notifications
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение")
+
+    Container(bff, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа и агрегации данных")
+
+    Container(profile, "Profile Service", "Backend Service", "Профиль пользователя, цели, предпочтения")
+
+    Container(training, "Training Service", "Backend Service", "Создание и хранение тренировок, базовые агрегаты")
+
+    Container(plans, "Plans & Rules Engine", "Backend Service", "Формирование и адаптация тренировочных планов на основе правил")
+
+    Container(notifications, "Notifications Service", "Worker / Push Service", "Планирование и отправка push/in-app уведомлений")
+
+    ContainerDb(operational_db, "Operational Database", "PostgreSQL / Managed DB", "Транзакционные данные профиля, тренировок, планов")
+}
+
+System_Ext(push_provider, "Push Provider", "FCM / APNS или аналог")
+System_Ext(brand_sso, "Brand SSO / Identity", "Учётные записи бренда")
+
+' Пользователь и приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+
+' Mobile App ↔ BFF
+Rel(mobile_app, bff, "Запросы экранов, планов и прогресса", "JSON/HTTPS")
+
+' BFF ↔ Profile / Training / Plans / Notifications
+Rel(bff, profile, "Сохранить/получить профиль и цели", "JSON/HTTPS")
+Rel(bff, training, "Создать/получить тренировки", "JSON/HTTPS")
+Rel(bff, plans, "Запрос / подтверждение плана,\nполучение прогресса", "JSON/HTTPS")
+Rel(bff, notifications, "Управление настройками\nуведомлений", "JSON/HTTPS")
+
+' Взаимодействие Plans & Rules Engine
+Rel(profile, plans, "Предоставляет данные профиля и целей", "JSON/HTTPS")
+Rel(training, plans, "Передаёт данные о выполненных\nтренировках", "JSON/HTTPS")
+Rel(plans, training, "Информация о запланированных\nсессиях по плану (опционально)", "JSON/HTTPS")
+
+' Plans & Rules Engine ↔ Notifications
+Rel(plans, notifications, "Триггеры для уведомлений\n(изменения плана, важные события)", "events/JSON")
+Rel(training, notifications, "Триггеры по событиям тренировок\n(рекорды, пропуски)", "events/JSON")
+
+' Notifications ↔ Push Provider
+Rel(notifications, push_provider, "Отправка push-уведомлений", "HTTPS/API")
+
+' Хранилище
+Rel(profile, operational_db, "Читает/пишет профиль и цели", "SQL")
+Rel(training, operational_db, "Читает/пишет тренировки", "SQL")
+Rel(plans, operational_db, "Читает/пишет данные планов", "SQL")
+
+' SSO (фоном, для полноты картины)
+Rel(mobile_app, brand_sso, "Вход через учётную запись бренда", "OIDC/SAML (через BFF/Identity)")
+
+SHOW_LEGEND()
+@enduml

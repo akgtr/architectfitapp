@@ -1,0 +1,57 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 150
+skinparam ranksep 150
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Integrations Layer
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение")
+
+    Container(bff, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа и агрегации данных")
+
+    Container(training, "Training Service", "Backend Service", "Тренировки и прогресс пользователя")
+
+    Container(integrations, "Integrations Service", "Backend Service", "Интеграции с устройствами, фитнес-платформами и B2B-партнёрами")
+
+    Container(event_bus, "Event Bus", "Kafka / RabbitMQ", "Поток событий для внутренних доменов")
+}
+
+System_Ext(phone_health, "Phone Health APIs", "Apple Health, Health Connect и др.")
+System_Ext(wearables, "Wearables", "Часы, браслеты, трекеры")
+System_Ext(b2b, "B2B-партнёры", "Корпоративные wellness-платформы, организаторы ивентов")
+
+' Пользователь и приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+Rel(mobile_app, bff, "Запросы", "JSON/HTTPS")
+
+' BFF ↔ Training (для отображения тренировок)
+Rel(bff, training, "Создать/получить тренировки", "JSON/HTTPS")
+
+' BFF ↔ Integrations (управление подключениями)
+Rel(bff, integrations, "Управление подключениями\nустройств и B2B-аккаунтов", "JSON/HTTPS")
+
+' Внешние системы ↔ Integrations
+Rel(phone_health, integrations, "Передаёт данные тренировок и метрик", "SDK / APIs")
+Rel(wearables, integrations, "Синхронизация тренировок и метрик", "SDK / APIs")
+Rel(b2b, integrations, "Корпоративные челленджи,\nзапросы статистики", "HTTPS/REST")
+
+' Integrations публикует события во внутренний контур
+Rel(integrations, event_bus, "Публикует события\nexternal_workout_synced,\nexternal_metrics_updated и др.", "events")
+Rel(event_bus, training, "Передаёт события\nдля создания/обновления тренировок", "events")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,67 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 120
+skinparam ranksep 120
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Operational DB и Analytics
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение")
+
+    Container(api_gateway, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа для клиента")
+
+    Container_Boundary(backend, "Backend Services") {
+        Container(training, "Training Service", "Backend Service", "Тренировки и прогресс")
+        Container(community, "Community Service", "Backend Service", "Соц. граф, группы, лента")
+        Container(challenges, "Challenges Service", "Backend Service", "Челленджи и лидерборды")
+        Container(commerce, "Commerce Service", "Backend Service", "Инвентарь, каталог, промо")
+        Container(plans, "Plans Service", "Backend Service", "Цели и тренировочные планы")
+    }
+
+    ContainerDb(operational_db, "Operational Database", "PostgreSQL / Managed DB", "OLTP: транзакционные данные по доменам")
+    ContainerDb(analytics_store, "Analytics Store / DWH", "Data Lake / DWH", "OLAP: аналитика, отчёты, сегменты")
+    Container(event_bus, "Event Bus", "Kafka / RabbitMQ", "Поток событий для аналитики и реакций")
+}
+
+' Пользователь и приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+Rel(mobile_app, api_gateway, "REST-запросы", "JSON/HTTPS")
+
+' API Gateway ↔ домены
+Rel(api_gateway, training, "Тренировки", "JSON/HTTPS")
+Rel(api_gateway, community, "Community", "JSON/HTTPS")
+Rel(api_gateway, challenges, "Челленджи", "JSON/HTTPS")
+Rel(api_gateway, commerce, "Commerce", "JSON/HTTPS")
+Rel(api_gateway, plans, "Планы", "JSON/HTTPS")
+
+' Домены ↔ Operational DB
+Rel(training, operational_db, "Читает/пишет", "SQL")
+Rel(community, operational_db, "Читает/пишет", "SQL")
+Rel(challenges, operational_db, "Читает/пишет", "SQL")
+Rel(commerce, operational_db, "Читает/пишет", "SQL")
+Rel(plans, operational_db, "Читает/пишет", "SQL")
+
+' События и аналитика
+Rel(training, event_bus, "Публикует события тренировок", "events")
+Rel(community, event_bus, "Публикует события активности", "events")
+Rel(challenges, event_bus, "Публикует события челленджей", "events")
+Rel(commerce, event_bus, "Публикует события инвентаря/промо", "events")
+
+Rel(event_bus, analytics_store, "Стрим событий\nдля аналитики", "events")
+Rel(operational_db, analytics_store, "ETL/ELT выгрузка\nоперационных данных", "batch")
+
+SHOW_LEGEND()
+@enduml
