@@ -4,15 +4,16 @@
 
 ## Содержание
 ### Концепт архитектурного решения
-- [1. Бизнес-цели.](docs/01_business_goals.md)
-- [2. Функциональные требования.](docs/02_Analysis_and_list_of_functional_requirements.md) 
-- [3. Анализ стейкхолдеров и их интересов.](docs/03_Analysis_of_stakeholders_and_their_interests.md)
-- [4. Концептуальная архитектура, схемы и диаграммы.](docs/04_conceptual_architecture.md)
-- [5. Описание рисков реализации (бизнес и технические).](docs/05_Description_of_implementation_risks.md)
-- [6. План поэтапной разработки и расширения системы, анализ критически важных компонентов.](docs/06_step_by_step_development_plan.md)
-- [7. Выделение критических бизнес-сценариев.](docs/07_critical_business_scenarios.md)
-- [8. Атрибуты качества.](docs/08_quality_%20attributes.md)
-- [9. Анализ и список нефункциональных требований](docs/09_list_of_non-functional_requirements.md)
+- [01. Бизнес-цели.](docs/01_business_goals.md)
+- [02. Функциональные требования.](docs/02_Analysis_and_list_of_functional_requirements.md) 
+- [03. Анализ стейкхолдеров и их интересов.](docs/03_Analysis_of_stakeholders_and_their_interests.md)
+- [04. Концептуальная архитектура, схемы и диаграммы.](docs/04_conceptual_architecture.md)
+- [05. Описание рисков реализации (бизнес и технические).](docs/05_Description_of_implementation_risks.md)
+- [06. План поэтапной разработки и расширения системы, анализ критически важных компонентов.](docs/06_step_by_step_development_plan.md)
+- [07. Выделение критических бизнес-сценариев.](docs/07_critical_business_scenarios.md)
+- [08. Атрибуты качества.](docs/08_quality_%20attributes.md)
+- [09. Анализ и список нефункциональных требований.](docs/09_list_of_non-functional_requirements.md)
+- [10. Анализ и описание архитектурных опций и обоснование выбора.]()
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
