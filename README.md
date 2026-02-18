@@ -11,6 +11,7 @@
 - [5. Описание рисков реализации (бизнес и технические).](docs/05_Description_of_implementation_risks.md)
 - [6. План поэтапной разработки и расширения системы, анализ критически важных компонентов.](docs/06_step_by_step_development_plan.md)
 - [7. Выделение критических бизнес-сценариев.](docs/07_critical_business_scenarios.md)
+- [8. Атрибуты качества.](docs/08_quality_%20attributes.md)
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Схемы, изображения](images/)
   
