@@ -1,0 +1,95 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 120
+skinparam ranksep 120
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+' (опционально) настройки читаемости
+LAYOUT_TOP_DOWN()
+
+Title C4 Container Diagram - API Gateway / BFF Focus
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение для тренировок, общения и челленджей")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение: тренировки, соц. функции, планы, каталог")
+
+    Container(api_gateway, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа, аутентификация, агрегация данных для мобильного клиента")
+
+    Container_Boundary(backend, "Backend Services") {
+
+        Container(community, "Community Service", "Java / Kotlin / .NET", "Социальный граф, группы, клубы")
+        Container(feed, "Feed & Activity Service", "Java / Kotlin / .NET", "Лента активности: тренировки, достижения, события")
+        Container(challenges, "Challenges & Leaderboards", "Java / Kotlin / .NET", "Челленджи и таблицы лидеров")
+
+        Container(training, "Training Service", "Java / Kotlin / .NET", "Хранение тренировок и прогресса")
+        Container(plans, "Training Plans & Rules Engine", "Java / Kotlin / .NET", "Подбор и адаптация планов тренировок")
+        Container(notifications, "Notifications & Motivation", "Worker / Push Service", "Планирование и отправка уведомлений")
+
+        Container(commerce, "Commerce & Catalog Service", "Java / Kotlin / .NET", "Инвентарь пользователя, in-app каталог, промо")
+        Container(identity, "Identity & Security", "Keycloak / Cognito / Custom", "Аутентификация, авторизация, SSO, сессии")
+        Container(integrations, "Integrations Service", "Java / Kotlin / .NET", "Интеграции с устройствами и B2B-партнёрами")
+    }
+
+    ContainerDb(operational_db, "Operational Database", "PostgreSQL / Managed DB", "Транзакционные данные: пользователи, тренировки, группы, челленджи, инвентарь")
+    Container(event_bus, "Event Bus", "Kafka / RabbitMQ", "Асинхронный обмен событиями")
+}
+
+System_Ext(brand_sso, "Brand SSO / Identity", "Существующая система учётных записей бренда")
+System_Ext(ecommerce, "E-commerce Platform", "Интернет-магазин бренда")
+System_Ext(marketing_tools, "Marketing / Campaign Tools", "CDP, кампании, промо")
+System_Ext(devices, "Fitness APIs & Wearables", "Apple Health, Health Connect, часы, трекеры")
+System_Ext(b2b, "Corporate Wellness / Events", "Корпоративные программы и массовые мероприятия")
+
+' Пользователь и мобильное приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+
+' Mobile App ↔ API Gateway / BFF
+Rel(mobile_app, api_gateway, "Запросы экранов и действий", "JSON/HTTPS")
+
+' API Gateway / BFF ↔ Backend (агрегация данных для экранов)
+Rel(api_gateway, identity, "Аутентификация, токены", "JWT / OAuth2")
+Rel(api_gateway, community, "Друзья, группы, клубы", "JSON/HTTPS")
+Rel(api_gateway, feed, "Лента активности", "JSON/HTTPS")
+Rel(api_gateway, challenges, "Челленджи, лидерборды", "JSON/HTTPS")
+Rel(api_gateway, training, "Тренировки, история, прогресс", "JSON/HTTPS")
+Rel(api_gateway, plans, "Планы тренировок, цели", "JSON/HTTPS")
+Rel(api_gateway, notifications, "Настройки уведомлений", "JSON/HTTPS")
+Rel(api_gateway, commerce, "Инвентарь, каталог, промо", "JSON/HTTPS")
+Rel(api_gateway, integrations, "Подключение устройств и B2B-сценарии", "JSON/HTTPS")
+
+' Backend ↔ Operational DB
+Rel(community, operational_db, "Читает/пишет соц. данные", "SQL")
+Rel(feed, operational_db, "Читает/пишет события ленты", "SQL")
+Rel(challenges, operational_db, "Читает/пишет данные челленджей", "SQL")
+Rel(training, operational_db, "Читает/пишет тренировки", "SQL")
+Rel(plans, operational_db, "Читает/пишет планы", "SQL")
+Rel(commerce, operational_db, "Читает/пишет инвентарь, каталог", "SQL")
+Rel(identity, operational_db, "Читает/пишет учётные данные", "SQL")
+
+' Event-driven взаимодействие (для ленты, уведомлений, аналитики)
+Rel(training, event_bus, "Публикует события тренировок", "events")
+Rel(challenges, event_bus, "Публикует события челленджей", "events")
+Rel(commerce, event_bus, "Публикует события инвентаря, промо", "events")
+Rel(integrations, event_bus, "Публикует события от устройств и B2B", "events")
+
+Rel(event_bus, feed, "Доставляет события для ленты", "events")
+Rel(event_bus, notifications, "Триггеры уведомлений", "events")
+
+' Внешние интеграции
+Rel(identity, brand_sso, "SSO, синхронизация учётных записей", "OIDC / SAML")
+Rel(commerce, ecommerce, "Каталог, deeplink на товары", "HTTPS/REST")
+Rel(commerce, marketing_tools, "Сегменты, кампании, промо", "HTTPS/REST")
+Rel(integrations, devices, "Синхронизация тренировок и метрик", "SDK / APIs")
+Rel(integrations, b2b, "Корпоративные челленджи, статистика", "HTTPS/REST")
+
+SHOW_LEGEND()
+@enduml

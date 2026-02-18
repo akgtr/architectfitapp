@@ -11,7 +11,7 @@ skinparam ArrowColor Black
 skinparam ArrowThickness 1
 skinparam ArrowHeadSize 6
 
-TITLE Архитектура спортивного приложения - Container Diagram
+TITLE C4 Container Diagram
 
 LAYOUT_TOP_DOWN()
 

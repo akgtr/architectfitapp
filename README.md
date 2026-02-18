@@ -14,7 +14,17 @@
 - [08. Атрибуты качества.](docs/08_quality_%20attributes.md)
 - [09. Анализ и список нефункциональных требований.](docs/09_list_of_non-functional_requirements.md)
 - [10. Анализ и описание архитектурных опций и обоснование выбора.]()
-- [ADR (Architecture Decision Records)](docs/adr/)
+### ADR (Architecture Decision Records)
+
+**Status:** Accepted  
+**Date:** 2026-02-18  
+**Authors:** Архитектор команды проекта спортивного приложения
+
+
+- [ADR-001: Выбор архитектурного стиля.](docs/adr/ADR-001.md)
+- [ADR-002: Использование API Gateway и BFF для мобильного клиента.](docs/adr/ADR-002.md)
+- [ADR-003: Гибридное взаимодействие REST + Event-driven через шину сообщений.](docs/adr/ADR-003.md)
+
 - [Схемы, изображения](images/)
   
 ## О проекте

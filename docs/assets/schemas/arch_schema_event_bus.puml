@@ -1,0 +1,88 @@
+@startuml
+!include docs/assets/schemas/C4_Container.puml
+
+' Более прямые и разнесённые связи
+skinparam nodesep 120
+skinparam ranksep 120
+
+' Ортогональная раскладка и более прямые линии
+skinparam linetype ortho
+skinparam ArrowColor Black
+skinparam ArrowThickness 1
+skinparam ArrowHeadSize 6
+
+Title C4 Container Diagram - Event Bus Focus
+
+LAYOUT_TOP_DOWN()
+
+Person(user, "Пользователь-спортсмен", "Использует мобильное приложение для тренировок, общения и челленджей")
+
+System_Boundary(app_system, "Спортивное приложение бренда") {
+
+    Container(mobile_app, "Mobile App", "Kotlin / Swift", "Мобильное приложение: тренировки, соц. функции, планы, каталог")
+
+    Container(api_gateway, "API Gateway / BFF", "REST/JSON, OAuth2", "Единая точка входа и агрегации данных для мобильного клиента")
+
+    Container_Boundary(backend, "Backend Services") {
+
+        Container(training, "Training Service", "Java / Kotlin / .NET", "Создание и хранение тренировок, базовые агрегаты")
+        Container(challenges, "Challenges & Leaderboards", "Java / Kotlin / .NET", "Челленджи, рейтинги, лидерборды")
+        Container(feed, "Feed & Activity Service", "Java / Kotlin / .NET", "Лента активности: тренировки, достижения, события")
+        Container(plans, "Training Plans & Rules Engine", "Java / Kotlin / .NET", "Подбор и адаптация планов тренировок")
+        Container(notifications, "Notifications & Motivation", "Worker / Push Service", "Планирование и отправка уведомлений")
+        Container(commerce, "Commerce & Catalog Service", "Java / Kotlin / .NET", "Инвентарь, in-app каталог, промо")
+        Container(integrations, "Integrations Service", "Java / Kotlin / .NET", "Интеграции с устройствами и B2B-партнёрами")
+    }
+
+    ContainerDb(operational_db, "Operational Database", "PostgreSQL / Managed DB", "Транзакционные данные по доменам")
+
+    Container(event_bus, "Event Bus", "Kafka / RabbitMQ", "Асинхронный обмен доменными событиями между сервисами")
+}
+
+System_Ext(devices, "Fitness APIs & Wearables", "Apple Health, Health Connect и др.")
+System_Ext(b2b, "Corporate Wellness / Events", "Корпоративные программы и мероприятия")
+
+' Пользователь и мобильное приложение
+Rel(user, mobile_app, "Использует", "HTTPS")
+Rel(mobile_app, api_gateway, "REST-запросы", "JSON/HTTPS")
+
+' API Gateway / BFF -> домены (синхронные вызовы)
+Rel(api_gateway, training, "Создание и получение тренировок", "JSON/HTTPS")
+Rel(api_gateway, challenges, "Управление челленджами", "JSON/HTTPS")
+Rel(api_gateway, feed, "Получение ленты активности", "JSON/HTTPS")
+Rel(api_gateway, plans, "Управление планами", "JSON/HTTPS")
+Rel(api_gateway, notifications, "Настройки уведомлений", "JSON/HTTPS")
+Rel(api_gateway, commerce, "Инвентарь, каталог", "JSON/HTTPS")
+Rel(api_gateway, integrations, "Подключение устройств и B2B-сценарии", "JSON/HTTPS")
+
+' --- ПУБЛИКАЦИЯ СОБЫТИЙ В ШИНУ ---
+
+Rel(training, event_bus, "Публикует события тренировок\nworkout_completed, workout_updated", "events")
+Rel(challenges, event_bus, "Публикует события челленджей\nchallenge_joined, challenge_progress_updated, challenge_completed", "events")
+Rel(plans, event_bus, "Публикует события планов\nplan_started, plan_adjusted, plan_completed", "events")
+Rel(commerce, event_bus, "Публикует события инвентаря и промо\ngear_usage_updated, gear_replacement_due", "events")
+Rel(integrations, event_bus, "Публикует события от устройств и B2B\nexternal_workout_synced и др.", "events")
+
+' --- ПОДПИСКА НА СОБЫТИЯ И РЕАКЦИИ ---
+
+Rel(event_bus, feed, "Доставляет события для формирования ленты\nworkout_completed, challenge_completed", "events")
+Rel(event_bus, challenges, "Доставляет события тренировок\nдля пересчёта прогресса челленджей", "events")
+Rel(event_bus, plans, "Доставляет события тренировок\nдля адаптации планов", "events")
+Rel(event_bus, notifications, "Доставляет события для триггеров уведомлений\nпропуски, достижения, изменения плана", "events")
+Rel(event_bus, commerce, "Доставляет события использования инвентаря\nдля промо и рекомендаций", "events")
+
+' --- ХРАНИЛИЩЕ ОПЕРАЦИОННЫХ ДАННЫХ ---
+
+Rel(training, operational_db, "Читает/пишет тренировки", "SQL")
+Rel(challenges, operational_db, "Читает/пишет челленджи", "SQL")
+Rel(feed, operational_db, "Читает/пишет элементы ленты", "SQL")
+Rel(plans, operational_db, "Читает/пишет планы", "SQL")
+Rel(commerce, operational_db, "Читает/пишет инвентарь", "SQL")
+
+' --- ВНЕШНИЕ ИНТЕГРАЦИИ (как источники событий) ---
+
+Rel(devices, integrations, "Синхронизирует тренировки и метрики", "SDK / APIs")
+Rel(b2b, integrations, "Создаёт корпоративные челленджи,\nзапрашивает статистику", "HTTPS/REST")
+
+SHOW_LEGEND()
+@enduml
